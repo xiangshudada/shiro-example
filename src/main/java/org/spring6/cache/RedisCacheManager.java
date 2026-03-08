@@ -1,0 +1,26 @@
+package org.spring6.cache;
+
+
+import org.apache.shiro.cache.Cache;
+import org.apache.shiro.cache.CacheException;
+import org.apache.shiro.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+/**
+ * @Author: zlpei
+ * @CreateTime: 2026-03-06
+ * @Description:
+ * @Version: 1.0
+ */
+@Component
+public class RedisCacheManager  implements CacheManager {
+
+    @Autowired
+    private RedisCache redisCache;
+
+    @Override
+    public <K, V> Cache<K, V> getCache(String s) throws CacheException {
+        return redisCache;
+    }
+}

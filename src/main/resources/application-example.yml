@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 示例：jdbc:mysql://localhost:3306/shiro?characterEncoding=utf-8
+    url: jdbc:mysql://<db-host>:3306/<db-name>?characterEncoding=utf-8
+    username: <db-username>
+    password: <db-password>
+
+  redis:
+    # Redis 链接信息示例（与 redis.conf 中 requirepass 一致）
+    host: <redis-host>
+    port: 6379
+    password: <redis-password>
+
+shiro:
+  loginUrl: /login.html
+  unauthorizedUrl: /401.html   # 针对过滤器链生效，针对注解是不生效的
+  register:
+    # 新用户注册时分配的默认角色ID，0 表示不分配
+    default-role-id: 0
+

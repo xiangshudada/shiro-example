@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .register-box {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 380px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            margin-top: 10px;
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        .link-box {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .link-box a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .link-box a:hover {
+            text-decoration: underline;
+        }
+        .msg {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+        .msg.success { background: #d4edda; color: #155724; display: block; }
+        .msg.error { background: #f8d7da; color: #721c24; display: block; }
+    </style>
+</head>
+<body>
+    <div class="register-box">
+        <h1>用户注册</h1>
+        <form id="registerForm" action="/user/register" method="post">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required placeholder="请输入用户名" />
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required placeholder="请输入密码" />
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">确认密码</label>
+                <input type="password" id="confirmPassword" required placeholder="请再次输入密码" />
+            </div>
+            <div id="msgBox" class="msg"></div>
+            <button type="submit" class="btn btn-primary">注册</button>
+        </form>
+        <div class="link-box">
+            已有账号？<a href="/login.html">去登录</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var password = document.getElementById('password').value;
+            var confirmPassword = document.getElementById('confirmPassword').value;
+            var msgBox = document.getElementById('msgBox');
+            msgBox.className = 'msg';
+            msgBox.style.display = 'none';
+
+            if (password !== confirmPassword) {
+                msgBox.textContent = '两次输入的密码不一致';
+                msgBox.className = 'msg error';
+                msgBox.style.display = 'block';
+                return;
+            }
+            if (password.length < 6) {
+                msgBox.textContent = '密码长度不能少于6位';
+                msgBox.className = 'msg error';
+                msgBox.style.display = 'block';
+                return;
+            }
+
+            var formData = new FormData(this);
+            fetch('/user/register', {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            })
+            .then(function(res) { return res.text(); })
+            .then(function(result) {
+                if (result === 'SUCCESS') {
+                    msgBox.textContent = '注册成功！即将跳转到登录页...';
+                    msgBox.className = 'msg success';
+                    msgBox.style.display = 'block';
+                    setTimeout(function() { window.location.href = '/login.html'; }, 1500);
+                } else if (result === 'USERNAME_EXISTS') {
+                    msgBox.textContent = '用户名已存在，请更换';
+                    msgBox.className = 'msg error';
+                    msgBox.style.display = 'block';
+                } else {
+                    msgBox.textContent = '注册失败，请稍后重试';
+                    msgBox.className = 'msg error';
+                    msgBox.style.display = 'block';
+                }
+            })
+            .catch(function() {
+                msgBox.textContent = '网络错误，请稍后重试';
+                msgBox.className = 'msg error';
+                msgBox.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
